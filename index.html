@@ -1,3 +1,51 @@
+<!-- Welcome banner -->
+<div id="knowledgeBanner" dir="rtl" style="
+  position:fixed; inset:0 0 auto 0; top:0; z-index:9999;
+  background:#14161b; color:#eaeaea; border-bottom:2px solid #c9a66b;
+  font-family:'Amiri','Scheherazade',serif; padding:16px;">
+  <div style="max-width:1000px; margin:0 auto; display:flex; gap:12px; align-items:center; justify-content:space-between;">
+    <div style="display:flex; flex-direction:column;">
+      <span style="font-size:20px; font-weight:700; color:#c9a66b;">
+        اعرف القرآن كله واحفظه.
+      </span>
+      <span style="font-size:16px; color:#a7b0bf;">
+        افتح هذا الرابط لاختبار معرفتك!
+      </span>
+    </div>
+    <div style="display:flex; gap:10px; align-items:center;">
+      <a href="https://albrhe1466-dotcom.github.io/Voicememoquran/" target="_blank" style="
+        display:inline-block; padding:10px 16px; border-radius:8px;
+        border:1px solid #c9a66b; background:#191c22; color:#c9a66b;
+        text-decoration:none; font-weight:700;">
+        افتح الرابط الآن
+      </a>
+      <button id="closeBannerBtn" style="
+        padding:8px 12px; border-radius:8px; border:1px solid #20222a;
+        background:#0e0f12; color:#eaeaea; cursor:pointer;">
+        إغلاق
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Allow closing the banner
+  document.getElementById('closeBannerBtn').addEventListener('click', function () {
+    const b = document.getElementById('knowledgeBanner');
+    if (b) b.remove();
+  });
+
+  // Optional: show banner only once per session
+  (function(){
+    const key = 'knowledgeBannerShown';
+    if (sessionStorage.getItem(key) === '1') {
+      const b = document.getElementById('knowledgeBanner');
+      if (b) b.remove();
+    } else {
+      sessionStorage.setItem(key, '1');
+    }
+  })();
+</script>
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
