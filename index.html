@@ -1,3 +1,197 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>مشغل القرآن</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    body {
+      margin: 0;
+      padding-left: 90px;
+      font-family: "Tahoma", Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+      direction: rtl;
+    }
+
+    /* الشريط الجانبي الأيمن */
+    .quran-sidebar {
+      position: fixed;
+      top: 0;
+      right: 0;
+      height: 100vh;
+      width: 100px;
+      background: #020617;
+      box-shadow: -5px 0 30px rgba(0, 255, 204, 0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px 6px;
+      gap: 10px;
+      z-index: 9999;
+    }
+
+    .title {
+      font-size: 12px;
+      opacity: 0.85;
+      text-align: center;
+    }
+
+    select {
+      width: 100%;
+      font-size: 11px;
+      padding: 4px;
+      background: #020617;
+      color: white;
+      border: 1px solid #1e293b;
+      border-radius: 6px;
+    }
+
+    button {
+      width: 100%;
+      background: #0ea5e9;
+      border: none;
+      color: white;
+      padding: 8px;
+      font-size: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .progress-container,
+    .volume-container {
+      width: 100%;
+      height: 8px;
+      background: #1e293b;
+      border-radius: 10px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .progress,
+    .volume {
+      height: 100%;
+      width: 0%;
+      background: #22c55e;
+      border-radius: 10px;
+    }
+
+    .time {
+      font-size: 10px;
+      text-align: center;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+
+<div class="quran-sidebar">
+  <div class="title">🎧 مشغل القرآن</div>
+
+  <select id="surahSelect"></select>
+
+  <audio id="audio"></audio>
+
+  <button id="playBtn">▶ تشغيل</button>
+
+  <!-- شريط التقدم -->
+  <div class="progress-container" id="progressContainer">
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <div class="time" id="timeText">00:00</div>
+
+  <!-- شريط الصوت -->
+  <div class="volume-container" id="volumeContainer">
+    <div class="volume" id="volumeBar"></div>
+  </div>
+</div>
+
+<script>
+  const surahNames = [
+    "الفاتحة","البقرة","آل عمران","النساء","المائدة","الأنعام","الأعراف","الأنفال",
+    "التوبة","يونس","هود","يوسف","الرعد","إبراهيم","الحجر","النحل","الإسراء","الكهف",
+    "مريم","طه","الأنبياء","الحج","المؤمنون","النور","الفرقان","الشعراء",
+    "النمل","القصص","العنكبوت","الروم","لقمان","السجدة","الأحزاب","سبأ","فاطر",
+    "يس","الصافات","ص","الزمر","غافر","فصلت","الشورى","الزخرف","الدخان",
+    "الجاثية","الأحقاف","محمد","الفتح","الحجرات","ق","الذاريات","الطور",
+    "النجم","القمر","الرحمن","الواقعة","الحديد","المجادلة","الحشر","الممتحنة",
+    "الصف","الجمعة","المنافقون","التغابن","الطلاق","التحريم","الملك","القلم",
+    "الحاقة","المعارج","نوح","الجن","المزمل","المدثر","القيامة","الإنسان",
+    "المرسلات","النبأ","النازعات","عبس","التكوير","الانفطار","المطففين","الانشقاق",
+    "البروج","الطارق","الأعلى","الغاشية","الفجر","البلد","الشمس","الليل",
+    "الضحى","الشرح","التين","العلق","القدر","البينة","الزلزلة","العاديات",
+    "القارعة","التكاثر","العصر","الهمزة","الفيل","قريش","الماعون","الكوثر",
+    "الكافرون","النصر","المسد","الإخلاص","الفلق","الناس"
+  ];
+
+  const audio = document.getElementById("audio");
+  const select = document.getElementById("surahSelect");
+  const playBtn = document.getElementById("playBtn");
+  const progress = document.getElementById("progress");
+  const progressContainer = document.getElementById("progressContainer");
+  const timeText = document.getElementById("timeText");
+  const volumeBar = document.getElementById("volumeBar");
+  const volumeContainer = document.getElementById("volumeContainer");
+
+  // تعبئة قائمة السور
+  for (let i = 1; i <= 114; i++) {
+    let num = i.toString().padStart(3, "0");
+    let option = document.createElement("option");
+    option.value = `https://download.quranicaudio.com/quran/abdul_basit_murattal/${num}.mp3`;
+    option.textContent = `سورة ${surahNames[i - 1]}`;
+    select.appendChild(option);
+  }
+
+  audio.src = select.value;
+
+  select.addEventListener("change", () => {
+    audio.src = select.value;
+    audio.play();
+    playBtn.textContent = "⏸ إيقاف مؤقت";
+  });
+
+  playBtn.addEventListener("click", () => {
+    if (audio.paused) {
+      audio.play();
+      playBtn.textContent = "⏸ إيقاف مؤقت";
+    } else {
+      audio.pause();
+      playBtn.textContent = "▶ تشغيل";
+    }
+  });
+
+  audio.addEventListener("timeupdate", () => {
+    if (!audio.duration) return;
+    const percent = (audio.currentTime / audio.duration) * 100;
+    progress.style.width = percent + "%";
+    const min = Math.floor(audio.currentTime / 60);
+    const sec = Math.floor(audio.currentTime % 60);
+    timeText.textContent = `${min}:${sec.toString().padStart(2, '0')}`;
+  });
+
+  progressContainer.addEventListener("click", (e) => {
+    const width = progressContainer.clientWidth;
+    const clickX = e.offsetX;
+    audio.currentTime = (clickX / width) * audio.duration;
+  });
+
+  volumeContainer.addEventListener("click", (e) => {
+    const width = volumeContainer.clientWidth;
+    const clickX = e.offsetX;
+    const vol = clickX / width;
+    audio.volume = vol;
+    volumeBar.style.width = (vol * 100) + "%";
+  });
+
+  audio.volume = 0.7;
+  volumeBar.style.width = "70%";
+</script>
+
+</body>
+</html>
+
 <!-- Welcome banner -->
 <div id="knowledgeBanner" dir="rtl" style="
   position:fixed; inset:0 0 auto 0; top:0; z-index:9999;
